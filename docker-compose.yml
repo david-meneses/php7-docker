@@ -1,0 +1,52 @@
+# Docker Compose file for a PHP, MySQL, and phpMyAdmin setup
+services:
+  # Apache and PHP service
+  web:
+    build: ./docker
+    image: php74-dev
+    container_name: php74-apache-container
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - .:/var/www
+    extra_hosts:
+      - host.docker.internal:host-gateway    
+    networks:
+      - my-network
+    depends_on:
+      - mysql
+
+  # MySQL service
+  mysql:
+    image: mysql:8.0
+    networks:
+      - my-network
+    container_name: mysql-container
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+
+  # phpMyAdmin service
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    networks:
+      - my-network
+    container_name: phpmyadmin-container
+    ports:
+      - 8000:80
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: admin
+    depends_on:
+      - mysql
+
+# Define networks
+networks:
+  my-network:
+    driver: bridge

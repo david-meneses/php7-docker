@@ -19,7 +19,7 @@ services:
 
   # MySQL service
   mysql:
-    image: mysql:8.0
+    image: mysql:8.0-debian
     networks:
       - my-network
     container_name: mysql-container
